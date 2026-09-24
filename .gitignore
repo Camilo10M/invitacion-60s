@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+
+# Build output
+/dist/
+dist/
+.vite/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor config
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
