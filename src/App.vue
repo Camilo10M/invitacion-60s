@@ -16,6 +16,10 @@ const isSubmitting = ref(false)
 const submitStatus = ref(null)
 let carouselTimer
 
+// Touch handling for swipe
+let touchStartX = 0
+let touchEndX = 0
+
 const goToImage = (index) => {
   currentImage.value = index
 }
@@ -53,6 +57,30 @@ const showNextLightboxImage = () => {
 
 const showPreviousLightboxImage = () => {
   lightboxImage.value = (lightboxImage.value - 1 + images.length) % images.length
+}
+
+// Touch event handlers for swipe
+const handleTouchStart = (e) => {
+  touchStartX = e.changedTouches[0].screenX
+}
+
+const handleTouchMove = (e) => {
+  touchEndX = e.changedTouches[0].screenX
+}
+
+const handleTouchEnd = () => {
+  const swipeThreshold = 50
+  const diff = touchStartX - touchEndX
+  
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      // Swipe left - next image
+      showNextLightboxImage()
+    } else {
+      // Swipe right - previous image
+      showPreviousLightboxImage()
+    }
+  }
 }
 
 const submitConfirmation = async (event) => {
@@ -253,7 +281,13 @@ onUnmounted(() => {
         <span aria-hidden="true">‹</span>
       </button>
       
-      <div class="lightbox-content" @click.stop>
+      <div 
+        class="lightbox-content" 
+        @click.stop
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
+      >
         <img 
           :src="images[lightboxImage]"
           :alt="`Recuerdo ${lightboxImage + 1} de 13`"
