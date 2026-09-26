@@ -89,11 +89,27 @@ const submitConfirmation = async (event) => {
   submitStatus.value = null
 
   const formData = new FormData(event.target)
+  
+  // Formatear fecha en zona horaria Colombia (UTC-5)
+  const now = new Date()
+  const colombiaOffset = -5 * 60 // Colombia es UTC-5 (en minutos)
+  const localOffset = now.getTimezoneOffset()
+  const colombiaTime = new Date(now.getTime() + (colombiaOffset - localOffset) * 60000)
+  
   const data = {
     name: formData.get('name'),
     guests: formData.get('guests'),
     message: formData.get('message') || '',
-    timestamp: new Date().toISOString()
+    timestamp: colombiaTime.toLocaleString('es-CO', {
+      timeZone: 'America/Bogota',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    })
   }
 
   try {
