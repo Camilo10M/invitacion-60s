@@ -278,9 +278,9 @@ const submitConfirmation = async (event) => {
       </header>
 
       <section class="message section-block" aria-labelledby="message-title">
-        <p class="section-kicker" id="message-title">Una invitación especial</p>
+        <p class="section-kicker" id="message-title">Una cordial invitación</p>
         <p>Eres parte importante de mi historia de vida. Con gratitud y cariño quiero compartir contigo un momento lleno de alegría y buena compañía.</p>
-        <p>Por eso, quiero que me acompañes en este paso tan especial de mi vida.</p>
+        <p>Por eso, quiero que me acompañes en este paso tan importante de mi vida.</p>
         <p>Te espero para disfrutar de un almuerzo campestre y de una tarde de tertulia.</p>
       </section>
 
@@ -311,7 +311,7 @@ const submitConfirmation = async (event) => {
         <div class="section-heading">
           <p class="section-kicker">Un pedacito de mi historia</p>
           <h2 id="memory-title">Así he vivido estos años</h2>
-          <p>Quiero compartir contigo algunas fotografías de mi vida, recuerdos que atesoro y que hacen aún más especial este momento.</p>
+          <p>Quiero compartir contigo algunas fotografías de mi vida, recuerdos que atesoro y que hacen aún más significativo este momento.</p>
         </div>
 
         <div class="carousel" aria-label="Galería de recuerdos">
