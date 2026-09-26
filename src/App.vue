@@ -20,6 +20,69 @@ let carouselTimer
 let touchStartX = 0
 let touchEndX = 0
 
+// Audio player
+const audioPlayer = ref(null)
+const isPlaying = ref(false)
+const volume = ref(0.3)
+
+// Initialize audio on first user interaction
+const initializeAudio = () => {
+  if (audioPlayer.value && !isPlaying.value) {
+    audioPlayer.value.volume = volume.value
+    audioPlayer.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(() => {
+      console.log('Audio play failed')
+    })
+  }
+}
+
+// Auto-play audio on mount
+onMounted(() => {
+  carouselTimer = window.setInterval(showNextImage, 4500)
+  
+  // Try to auto-play audio first
+  if (audioPlayer.value) {
+    audioPlayer.value.volume = volume.value
+    audioPlayer.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(() => {
+      // Auto-play was blocked, wait for user interaction
+      console.log('Autoplay blocked, waiting for user interaction')
+    })
+  }
+  
+  // Add scroll listener to document for audio initialization
+  document.addEventListener('scroll', initializeAudio, { once: true })
+  
+  // Also add click listener as backup
+  document.addEventListener('click', initializeAudio, { once: true })
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+  document.removeEventListener('scroll', initializeAudio)
+  document.removeEventListener('click', initializeAudio)
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+  document.removeEventListener('click', initializeAudio)
+})
+
+onMounted(() => {
+  carouselTimer = window.setInterval(showNextImage, 4500)
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+  document.removeEventListener('click', initializeAudio)
+})
+
 const goToImage = (index) => {
   currentImage.value = index
 }
@@ -80,6 +143,29 @@ const handleTouchEnd = () => {
       // Swipe right - previous image
       showPreviousLightboxImage()
     }
+  }
+}
+
+// Audio control functions
+const toggleAudio = () => {
+  if (!audioPlayer.value) return
+  
+  if (isPlaying.value) {
+    audioPlayer.value.pause()
+    isPlaying.value = false
+  } else {
+    audioPlayer.value.muted = false
+    audioPlayer.value.volume = volume.value
+    audioPlayer.value.play()
+    isPlaying.value = true
+    audioInitialized.value = true
+  }
+}
+
+const setVolume = (newVolume) => {
+  volume.value = newVolume
+  if (audioPlayer.value) {
+    audioPlayer.value.volume = newVolume
   }
 }
 
@@ -144,13 +230,7 @@ const submitConfirmation = async (event) => {
   }
 }
 
-onMounted(() => {
-  carouselTimer = window.setInterval(showNextImage, 4500)
-})
 
-onUnmounted(() => {
-  window.clearInterval(carouselTimer)
-})
 </script>
 
 <template>
@@ -269,6 +349,19 @@ onUnmounted(() => {
         </button>
       </section>
     </section>
+
+    <!-- Audio Player Control -->
+    <button 
+      class="audio-control"
+      type="button"
+      @click="toggleAudio"
+      :aria-label="isPlaying ? 'Pausar música' : 'Reproducir música'"
+      :title="isPlaying ? 'Pausar música' : 'Reproducir música'"
+    >
+      <span class="audio-icon" aria-hidden="true">
+        {{ isPlaying ? '⏸' : '▶' }}
+      </span>
+    </button>
 
     <!-- Lightbox Modal -->
     <div 
@@ -407,4 +500,14 @@ onUnmounted(() => {
       </div>
     </div>
   </main>
+
+  <!-- Audio Element -->
+  <audio 
+    ref="audioPlayer"
+    autoplay
+    loop
+    @volumechange="isPlaying = !audioPlayer.paused"
+  >
+    <source src="/music/Ed Sheeran-Shape of You.mp3" type="audio/mpeg">
+  </audio>
 </template>
