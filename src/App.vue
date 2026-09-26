@@ -52,11 +52,43 @@ onMounted(() => {
     })
   }
   
-  // Add scroll listener to document for audio initialization
-  document.addEventListener('scroll', initializeAudio, { once: true })
+  // Add multiple interaction events for audio initialization
+  const events = [
+    'scroll',           // Mouse scroll
+    'click',            // Mouse click
+    'mousedown',        // Mouse button press
+    'mousemove',        // Mouse movement (drag)
+    'wheel',            // Mouse wheel
+    'touchstart',       // Touch start (mobile)
+    'touchmove',        // Touch move (mobile swipe)
+    'keydown'           // Keyboard press
+  ]
   
-  // Also add click listener as backup
-  document.addEventListener('click', initializeAudio, { once: true })
+  events.forEach(event => {
+    document.addEventListener(event, initializeAudio, { once: true })
+  })
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+  
+  // Clean up all event listeners
+  const events = [
+    'scroll', 'click', 'mousedown', 'mousemove', 'wheel',
+    'touchstart', 'touchmove', 'keydown'
+  ]
+  
+  events.forEach(event => {
+    document.removeEventListener(event, initializeAudio)
+  })
+})
+
+onUnmounted(() => {
+  window.clearInterval(carouselTimer)
+  document.removeEventListener('scroll', initializeAudio)
+  document.removeEventListener('touchstart', initializeAudio)
+  document.removeEventListener('touchmove', initializeAudio)
+  document.removeEventListener('click', initializeAudio)
 })
 
 onUnmounted(() => {
